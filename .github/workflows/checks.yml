@@ -2,34 +2,21 @@
 
 name: Checks
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   test-lint:
     name: Test and Lint
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # Paso de depuración para obtener información detallada sobre cualquier error
-      - name: Debug
-        run: echo "Debugging information"
-
-      # Iniciar sesión en Docker Hub con las credenciales
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # Ejecutar pruebas de Django
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Test
         run: docker-compose run --rm app sh -c "python manage.py test"
-
-      # Ejecutar el linting con Flake8
       - name: Lint
         run: docker-compose run --rm app sh -c "flake8"
